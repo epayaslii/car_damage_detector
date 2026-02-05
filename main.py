@@ -6,46 +6,42 @@ import pandas as pd
 import numpy as np
 from ultralytics import YOLO
 
-# --- 1. GOOGLE DRIVE MODEL İNDİRME SİSTEMİ ---
-FILE_ID = '1s56EN4Ed-ituLV8WNFTZh374JO3hIppX' 
-URL = f'https://drive.google.com/uc?export=download&confirm=t&id={FILE_ID}'
-MODEL_PATH = 'best.pt'
+
+# --- 1. HUGGING FACE MODEL İNDİRME SİSTEMİ ---
+# Senin paylaştığın linki buraya tanımladık
+MODEL_URL = "https://huggingface.co/elizpayasli/car_dd/resolve/main/best%20(3).pt"
+MODEL_PATH = "best.pt" # İçeride bu isimle kullanacağız, kafa karışıklığına son!
 
 @st.cache_resource
 def download_and_load_model():
     if not os.path.exists(MODEL_PATH):
-        with st.spinner("Model Google Drive'dan güvenli şekilde indiriliyor..."):
-            session = requests.Session()
-            # İlk istek: Onay sayfası var mı kontrol et
-            response = session.get(URL, params={'id': FILE_ID}, stream=True)
-            token = None
-            for key, value in response.cookies.items():
-                if key.startswith('download_warning'):
-                    token = value
-                    break
-
-            # Eğer onay kodu gerekiyorsa, onu ekleyerek tekrar iste
-            if token:
-                params = {'id': FILE_ID, 'confirm': token}
-                response = session.get(URL, params=params, stream=True)
-
+        with st.spinner("Model Hugging Face üzerinden indiriliyor..."):
             try:
-                with open(MODEL_PATH, "wb") as f:
-                    for chunk in response.iter_content(chunk_size=32768):
-                        if chunk: f.write(chunk)
-                st.success("Model başarıyla indirildi ve doğrulandı!")
+                # Hugging Face direkt indirmeye izin verdiği için Session veya Token gerekmez
+                response = requests.get(MODEL_URL, stream=True)
+                if response.status_code == 200:
+                    with open(MODEL_PATH, "wb") as f:
+                        for chunk in response.iter_content(chunk_size=1024*1024): # 1MB'lık parçalar
+                            if chunk:
+                                f.write(chunk)
+                    st.success("YOLOv11 modeli başarıyla yüklendi!")
+                else:
+                    st.error(f"Dosya indirilemedi. Hata kodu: {response.status_code}")
+                    return None
             except Exception as e:
-                st.error(f"İndirme hatası: {e}")
+                st.error(f"İndirme sırasında bir hata oluştu: {e}")
                 return None
     
     return YOLO(MODEL_PATH)
-    
+
 # --- 2. SAYFA AYARLARI ---
 st.set_page_config(page_title="Araba Hasar Analizi", layout="wide")
 st.title("🚗 Profesyonel Araba Hasar Tespit ve Maliyet Analizi")
 st.markdown("Bu uygulama, **YOLO11** modelini kullanarak araç üzerindeki hasarları tespit eder ve onarım maliyeti çıkarır.")
 
 model = download_and_load_model()
+
+# Uygulamanın geri kalan kısmını (Fiyat Listesi ve Arayüz) altına ekleyebilirsin...
 
 # --- 3. FİYAT LİSTESİ ---
 price_dictionary = {
