@@ -13,7 +13,7 @@ st.markdown("Bu uygulama, **YOLO11** modelini kullanarak araç üzerindeki hasar
 
 # --- MODEL YÜKLEME ---
 # Burayı kendi best.pt dosyanın yoluna göre güncelle!
-MODEL_PATH = 'best (3).pt'
+MODEL_PATH = 'best(3).pt'
 
 @st.cache_resource # Modelin her seferinde tekrar yüklenip uygulamayı yavaşlatmasını engeller
 def load_model():
