@@ -13,23 +13,33 @@ MODEL_PATH = 'best.pt'
 
 @st.cache_resource
 def download_and_load_model():
-    # Eğer model yoksa Drive'dan indir
     if not os.path.exists(MODEL_PATH):
-        with st.spinner("Yapay zeka modeli Google Drive'dan indiriliyor..."):
+        with st.spinner("Model Google Drive'dan güvenli şekilde indiriliyor..."):
+            session = requests.Session()
+            # İlk istek: Onay sayfası var mı kontrol et
+            response = session.get(URL, params={'id': FILE_ID}, stream=True)
+            token = None
+            for key, value in response.cookies.items():
+                if key.startswith('download_warning'):
+                    token = value
+                    break
+
+            # Eğer onay kodu gerekiyorsa, onu ekleyerek tekrar iste
+            if token:
+                params = {'id': FILE_ID, 'confirm': token}
+                response = session.get(URL, params=params, stream=True)
+
             try:
-                response = requests.get(URL, stream=True)
                 with open(MODEL_PATH, "wb") as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        if chunk:
-                            f.write(chunk)
-                st.success("Model başarıyla indirildi!")
+                    for chunk in response.iter_content(chunk_size=32768):
+                        if chunk: f.write(chunk)
+                st.success("Model başarıyla indirildi ve doğrulandı!")
             except Exception as e:
-                st.error(f"Model indirilirken hata oluştu: {e}")
+                st.error(f"İndirme hatası: {e}")
                 return None
     
-    # Model indiyse veya zaten varsa YOLO ile yükle
     return YOLO(MODEL_PATH)
-
+    
 # --- 2. SAYFA AYARLARI ---
 st.set_page_config(page_title="Araba Hasar Analizi", layout="wide")
 st.title("🚗 Profesyonel Araba Hasar Tespit ve Maliyet Analizi")
