@@ -8,7 +8,7 @@ from ultralytics import YOLO
 
 # --- 1. GOOGLE DRIVE MODEL İNDİRME SİSTEMİ ---
 FILE_ID = '1s56EN4Ed-ituLV8WNFTZh374JO3hIppX' 
-URL = f'https://drive.google.com/uc?export=download&id={FILE_ID}'
+URL = f'https://drive.google.com/uc?export=download&confirm=t&id={FILE_ID}'
 MODEL_PATH = 'best.pt'
 
 @st.cache_resource
