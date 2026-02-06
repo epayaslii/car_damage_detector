@@ -68,12 +68,15 @@ def create_pdf(df, total_cost):
 st.set_page_config(page_title="Car Damage AI", layout="wide")
 
 with st.sidebar:
-    
-    st.title("Project Info")
-    st.info(""This project is an AI-driven solution for insurance and repair shops, developed by Eliz Payasli, engineering student at Boğaziçi University.")
+    st.markdown("# 👤 Developer")
+    st.subheader("Eliz Payasli") 
+    st.write("Boğaziçi University IE & CS Student")
     st.markdown("---")
-    st.write("🔧 **Engine:** YOLOv8")
-    st.write("📊 **Output:** Damage Analysis and Cost Estimation")
+    st.title("Project Info")
+    st.info("AI-powered car damage analyzer providing instant cost estimations.")
+    st.title("Project Info")
+    st.info("AI-powered car damage analyzer providing instant cost estimations.")
+   
 
 st.title("🚗 AI Car Damage Analysis & Cost Estimation")
 st.markdown("Upload a photo of the damaged vehicle to get an instant repair cost assessment.")
