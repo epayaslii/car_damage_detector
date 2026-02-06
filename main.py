@@ -74,8 +74,6 @@ with st.sidebar:
     st.markdown("---")
     st.title("Project Info")
     st.info("AI-powered car damage analyzer providing instant cost estimations.")
-    st.title("Project Info")
-    st.info("AI-powered car damage analyzer providing instant cost estimations.")
    
 
 st.title("🚗 AI Car Damage Analysis & Cost Estimation")
